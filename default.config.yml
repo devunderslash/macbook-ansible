@@ -1,0 +1,115 @@
+---
+downloads: ~/.ansible-downloads/
+
+configure_dotfiles: true
+
+configure_iterm: true
+# Change default shell to zsh
+default_shell_zsh: yes
+# Install oh my zsh
+install_oh_my_zsh: yes
+
+configure_sudoers: false
+sudoers_custom_config: ''
+# Example:
+# sudoers_custom_config: |
+#   # Allow users in admin group to use sudo with no password.
+#   %admin ALL=(ALL) NOPASSWD: ALL
+
+dotfiles_repo: https://github.com/devunderslash/dotfiles.git
+dotfiles_repo_accept_hostkey: true
+dotfiles_repo_version: updated
+dotfiles_repo_local_destination: ~/Development/GitHub/dotfiles
+dotfiles_files:
+  - .zshrc
+  - .gitignore
+  - .inputrc
+  - .p10k.zsh
+
+homebrew_installed_packages:
+  # *** Common Dev Tools ***
+  # - ansible # Installed via Pip.
+  - bash-completion
+  - git
+  - gh
+  - go
+  - mysql
+  - minikube
+  - nmap
+  - node
+  - openssl
+  - romkatv/powerlevel10k/powerlevel10k
+  - ruby
+  - sqlite
+  - ssh-copy-id
+  - tmux
+  - chezmoi
+  - wget
+  - zsh-history-substring-search
+
+  # *** DevOps ***
+  - awscli
+  - jq
+  - packer
+  - warrensbox/tap/tfswitch
+  - grype
+  - syft
+  - docker
+
+  # *** Java ***
+  - jenv # Manage your Java environment
+  - maven # Java-based project management
+
+homebrew_taps:
+  - homebrew/core
+  - homebrew/cask
+  - adoptopenjdk/openjdk
+  - anchore/grype
+  - anchore/syft
+
+homebrew_cask_appdir: /Applications
+homebrew_cask_accept_external_apps: true
+homebrew_cask_apps:
+  - iterm2
+  - chromedriver
+#  - google-chrome - preinstalled
+  - mysqlworkbench
+  - pgadmin4
+  - docker
+  - vagrant
+  - virtualbox
+  - virtualbox-extension-pack
+  - fly
+  - postman
+  - adoptopenjdk8 #Java JDK
+  - adoptopenjdk11 #Java JDK
+
+# See `geerlingguy.mas` role documentation for usage instructions.
+mas_installed_apps: []
+mas_email: ""
+mas_password: ""
+
+# osx_script: "~/.osx --no-restart"
+
+# Install packages from other package managers.
+# Note: You are responsible for making sure the required package managers are
+# installed, eg. through homebrew.
+composer_packages: []
+# - name: drush
+#   state: present # present/absent, default: present
+#   version: "^8.1" # default: N/A
+gem_packages: []
+# - name: bundler
+#   state: present # present/absent/latest, default: present
+#   version: "~> 1.15.1" # default: N/A
+npm_packages: []
+# - name: webpack
+#   state: present # present/absent/latest, default: present
+#   version: "^2.6" # default: N/A
+pip_packages: []
+# - name: mkdocs
+#   state: present # present/absent/latest, default: present
+#   version: "0.16.3" # default: N/A
+
+# Glob pattern to ansible task files to run after all other tasks are finished.
+post_provision_tasks: []

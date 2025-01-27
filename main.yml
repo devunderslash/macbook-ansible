@@ -1,0 +1,62 @@
+---
+- hosts: all
+
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - name: Include playbook configuration.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - "{{ playbook_dir }}/config.yml"
+      tags: ['always']
+
+  roles:
+    - role: elliotweiser.osx-command-line-tools
+    - role: geerlingguy.mac.homebrew
+      tags: ['homebrew']
+    - role: geerlingguy.dotfiles
+      when: configure_dotfiles
+      tags: ['dotfiles']
+    - role: geerlingguy.mac.mas
+      when: mas_installed_apps or mas_installed_app_ids
+      tags: ['mas']
+    # - role: gantsign.visual-studio-code
+    #   users:
+    #     - username: admin
+    #       visual_studio_code_extensions:
+    #         - eamodio.gitlens # Supercharge Git 
+    #         - akamud.vscode-theme-onedark # Theme
+    #         - file-icons.file-icons #Icons
+    #         - DotJoshJohnson.xml # ML formatting
+    #         - formulahendry.code-runner # Run code from vscode
+    #         - 4ops.terraform # Terraform
+    #         - ms-azuretools.vscode-docker # Linting for Dockerfile and docker-compose files
+    #         - ms-python.python # Python
+    #         - ms-vsliveshare.vsliveshare # Real-time collaborative development
+    #         - nhoizey.gremlins # Reveals some characters that can be harmful because they are invisible or looking like legitimate ones
+    #         - quicktype.quicktype # Copy JSON, paste as Go, TypeScript, C#, C++ and more
+    #         - redhat.vscode-yaml # Yaml language support
+    #         - samuelcolvin.jinjahtml # Syntax highlighting for jinja
+    #         - tht13.python # Python language
+    #         - VisualStudioExptTeam.vscodeintellicode # AI-assisted development
+    #         - gitHub.copilot # AI assisted Development
+
+  tasks:
+    - import_tasks: tasks/sudoers.yml
+      when: configure_sudoers
+      tags: ['sudoers']
+
+    - import_tasks: tasks/iterm2.yml
+      when: configure_iterm
+      tags: ['iterm']
+
+    - import_tasks: tasks/extra-packages.yml
+      tags: ['extra-packages']
+
+    - name: Run configured post-provision ansible task files.
+      include_tasks: "{{ outer_item }}"
+      loop_control:
+        loop_var: outer_item
+      with_fileglob: "{{ post_provision_tasks|default(omit) }}"
+      tags: ['post']

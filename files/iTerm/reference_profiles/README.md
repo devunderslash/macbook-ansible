@@ -1,0 +1,1 @@
+These profiles are for reference only and are not part of the playbook run. If the playbook run fails you can import these profiles manually via iTerm2 preferences.

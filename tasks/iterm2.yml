@@ -1,0 +1,78 @@
+---
+# Check if iTerm is installed
+- name: Check if iterm2 is installed
+  homebrew_cask:
+    name: "iterm2"
+    state: present
+    accept_external_apps: True
+    
+- name: Get current Solarized package
+  get_url: 
+    url: "http://ethanschoonover.com/solarized/files/solarized.zip" 
+    dest: "~/Downloads/"
+
+- name: Cloning fonts
+  git:
+    repo: "https://github.com/powerline/fonts"
+    dest: "~/.config/powerlinefonts"
+    accept_hostkey: yes
+  register: fontCloned
+  become: no
+
+- name: Cloning NerdFonts
+  git:
+    repo: "https://github.com/devunderslash/NerdFonts"
+    dest: "~/.config/powerlinefonts/NerdFonts"
+    accept_hostkey: yes
+  when: fontCloned
+  register: nerdFontCloned
+  become: no
+
+- name: Install Fonts
+  shell: ~/.config/powerlinefonts/install.sh 
+  args: 
+    chdir: '~/.config/powerlinefonts'
+  when: nerdFontCloned
+  become: no
+
+- name: iTerm custom settings file
+  osx_defaults:
+    domain: com.googlecode.iterm2
+    key: PrefsCustomFolder
+    type: string
+    value: "{{ ansible_env.PWD }}/files/iTerm/files"
+
+- name: Copy iTerm settings file
+  copy:
+    src: "{{ ansible_env.PWD }}/files/iTerm/files/com.googlecode.iterm2.plist"
+    dest: "~/Library/Preferences/com.googlecode.iterm2.plist"
+    owner: $USER
+    mode: 0600
+    backup: yes
+
+- name: Copy iTerm profiles file
+  copy:
+    src: "{{ ansible_env.PWD }}/files/iTerm/files/windows.plist" 
+    dest: "~/Library/Saved\ Application\ State/com.googlecode.iterm2.savedState/windows.data"
+    owner: $USER
+    mode: 0600
+    backup: yes
+  
+- name: Installing zsh package
+  homebrew:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - zsh
+
+- name: Installing oh-my-zsh
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "~/.oh-my-zsh"
+    update: yes
+  register: zshInstalled
+  when: install_oh_my_zsh
+
+- name: Powering up with powerlevel10k
+  ansible.builtin.shell: echo "source $(brew --prefix)/opt/powerlevel10k/powerlevel10k.zsh-theme" 
+  when: zshInstalled
